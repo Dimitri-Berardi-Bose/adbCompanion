@@ -1,0 +1,211 @@
+#!/bin/bash
+
+startingDirectory=$(pwd)
+binDirectory=""
+deviceID=""
+deviceName=""
+
+kvbashSetup()
+{
+	# First, there needs to be a place to put the cloned repo.
+	# It is going to go into the /bin directory in users home directory
+	# If a /bin directory exists, cd into it, otherwise, create it then cd 
+	cd
+	binsetup=$(ls | grep -w "bin")
+	
+	if [[ $binsetup == "" ]]; then
+		mkdir bin 
+	fi
+	cd bin/
+	
+	binDirectory=$(pwd)
+	
+	# Need to clone repo for "database" to store key-value pairs.
+	# Check if it has been cloned before.  If it has, just source it,
+	# otherwise, clone repo and source it.
+	kvbashsetup=$(ls | grep -w "kv-bash")
+
+	if [[ $kvbashsetup == "" ]]; then
+		echo -e "Cloning kv-bash from github repo: https://github.com/damphat/kv-bash.git into $binDirectory\n"
+		git clone https://github.com/damphat/kv-bash.git
+		echo
+	fi
+
+	source kv-bash/./kv-bash
+}
+
+inputArgs()
+{
+	helpString="\n
+				Usages:\n
+				adbshell -h (--help): Display Help\n
+				adbshell -c (--clear): Clear Saved Names\n
+				adbshell -r (--reset): Clear Saved Names and Remove kv-bash from System\n"
+	
+	if [[ -z $1 ]]; then
+		return
+	fi
+	
+	for arg in $@; do case $arg in
+		--help|-h)
+			echo -e $helpString
+			exit
+			;;
+		--clear|-c)
+			kvclear
+			echo "Device Names Cleared Successfully"
+			exit
+			;;
+		--reset|-r )
+			kvclear
+			echo "Device Names Cleared Successfully"
+			
+			# erasing kv-bash repo from /bin directory
+			cd $binDirectory
+			rm -rf kv-bash
+			echo "kv-bash removed successfully"
+			exit
+			;;
+		*)
+			echo -e "\n Unsupported command: See reference below"
+			echo -e $helpString
+			exit
+		esac
+	done
+}
+
+verify_server()
+{
+	# My server needs to be restarted with each new session
+	# Unsure why, and probably an unneccesary step for most
+	echo "Checking Server Status"
+	
+	serverstatus=$(adb devices | grep -w "no permissions")
+
+	if [[ $serverstatus != "" ]]; then
+		echo "User Currently Lacks Permissions: Restarting Server"
+		eatOutput=$(adb kill-server)
+		eatOutput=$(sudo adb start-server)
+		echo "ADB Server Reset"
+	fi
+}
+
+installZenity()
+{
+	downZenity=$(which zenity)
+	
+	if [[ $downZenity == "" ]]; then
+		echo
+		sudo apt-get install zenity
+	fi
+}
+
+setup()
+{
+	kvbashSetup
+	inputArgs $@
+	verify_server
+	installZenity
+}
+
+labelNewDevices()
+{
+	for line in $@; do
+		if [[ $(kvget $line) == "" ]]; then
+			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" )
+			
+			if [[ $input == "" ]]; then
+				continue
+			fi
+			
+			if [[ $(kvget $input) != "" ]]; then
+				zenity --error --text "That Name Already Exists"
+				labelNewDevices $@
+				return
+			fi
+			
+			if [[ $input = *" "* ]]; then
+				zenity --error --text "Name Can't Have Spaces"
+				labelNewDevices $@
+				return
+			fi
+			
+			kvset $input $line
+			kvset $line $input
+		fi
+	done
+}
+
+chooseService()
+{
+	adbShell="adb shell"
+	cpBinsSpotify="cp-bins-to-target [Spotify]"
+	collectLogs="start collecting log to /bin/"
+	
+	services=("$adbShell")
+	services+=("$cpBinsSpotify")
+	services+=("$collectLogs")
+	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}");
+	
+	echo
+	case "$service" in
+		"${services[0]}")
+			adb -s $deviceID shell
+			exit
+			;;
+		"${services[1]}")
+			cd
+			cd /scratch/git/AudioSource-Spotify
+			cp-bins-to-target --deviceid $deviceID -spotify
+			adb -s $deviceID shell /opt/Bose/bin/Spotify &
+			echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
+			exit
+			;;
+		"${services[2]}")
+			adblog -s $deviceID -l
+			;;
+		*)
+			exit
+			;;
+	esac
+}
+
+######## Main Script Starts Here #########
+
+setup $@
+
+devices=$(adb devices | grep -w "device" | cut -c -7)
+
+if [[ $devices == "" ]]; then
+	zenity --error --text "No Devices Plugged In"
+	exit
+fi
+
+labelNewDevices $devices
+
+for line in $devices; do
+	if [[ $(kvget $line) != "" ]]; then  
+		devlist="${devlist} $(kvget $line)"
+	else
+		devlist="${devlist} $line"
+	fi
+done
+
+echo
+ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist);
+
+if [[ $ans != "" ]]; then
+	if [[ $(kvget $ans) != "" ]]; then
+		deviceID=$(kvget $ans)
+		deviceName=$ans
+	else
+		deviceID=$ans
+		deviceName=$ans
+	fi
+else
+	exit
+fi
+
+chooseService
+
+
