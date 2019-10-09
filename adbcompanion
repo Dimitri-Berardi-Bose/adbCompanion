@@ -10,10 +10,11 @@ checkoutMaster()
 {
 	cd
 	cd /home/db1044654/bin/adbCompanion/
+	
 	if [[ $isUpdated == "false" ]]; then
-		git stash
-		git checkout master
-		git pull
+		eatOutput=$(git stash)
+		eatOutput=$(git checkout master)
+		eatOutput=$(git pull)
 		exec $0 "D3gN0" "$@"
 		exit 1
 	fi
@@ -188,16 +189,7 @@ chooseService()
 	esac
 }
 
-finish()
-{
-	echo "EXITED"
-}
-
 ######## Main Script Starts Here #########
-
-echo $isUpdated
-
-trap finish EXIT
 
 setup $@
 
