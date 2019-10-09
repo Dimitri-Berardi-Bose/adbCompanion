@@ -4,6 +4,20 @@ startingDirectory=$(pwd)
 binDirectory=""
 deviceID=""
 deviceName=""
+isUpdated="false"
+
+checkoutMaster()
+{
+	cd
+	cd /home/db1044654/bin/adbCompanion/
+	if [[ $isUpdated == "false" ]]; then
+		git stash
+		git checkout master
+		git pull
+		exec $0 "D3gN0" "$@"
+		exit 1
+	fi
+}
 
 kvbashSetup()
 {
@@ -56,7 +70,7 @@ inputArgs()
 			echo "Device Names Cleared Successfully"
 			exit
 			;;
-		--reset|-r )
+		--reset|-r)
 			kvclear
 			echo "Device Names Cleared Successfully"
 			
@@ -66,8 +80,11 @@ inputArgs()
 			echo "kv-bash removed successfully"
 			exit
 			;;
+		D3gN0)
+			isUpdated="true"
+			;;
 		*)
-			echo -e "\n Unsupported command: See reference below"
+			echo -e "\n$arg is an unsupported command: See reference below"
 			echo -e $helpString
 			exit
 		esac
@@ -104,6 +121,7 @@ setup()
 {
 	kvbashSetup
 	inputArgs $@
+	checkoutMaster
 	verify_server
 	installZenity
 }
@@ -170,7 +188,16 @@ chooseService()
 	esac
 }
 
+finish()
+{
+	echo "EXITED"
+}
+
 ######## Main Script Starts Here #########
+
+echo $isUpdated
+
+trap finish EXIT
 
 setup $@
 
