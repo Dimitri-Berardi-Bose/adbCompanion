@@ -164,7 +164,7 @@ chooseService()
 	services=("$adbShell")
 	services+=("$cpBinsSpotify")
 	services+=("$collectLogs")
-	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}");
+	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
 	
 	echo
 	case "$service" in
@@ -211,7 +211,7 @@ for line in $devices; do
 done
 
 echo
-ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist);
+ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist 2>/dev/null);
 
 if [[ $ans != "" ]]; then
 	if [[ $(kvget $ans) != "" ]]; then
