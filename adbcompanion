@@ -13,7 +13,9 @@ checkoutMaster()
 	
 	if [[ $isUpdated == "false" ]]; then
 		eatOutput=$(git stash)
-		eatOutput=$(git checkout master)
+		if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
+			eatOutput=$(git checkout master)
+		fi
 		eatOutput=$(git pull)
 		exec $0 "D3gN0" "$@"
 		exit 1
