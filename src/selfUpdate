@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd
+cd /home/db1044654/bin/adbCompanion/
+	
+eatOutput=$(git stash)
+
+if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
+	eatOutput=$(git checkout master)
+fi
+
+eatOutput=$(git pull)
+exec adbcompanion "D3gN0" "$@"
+
+exit 1
+

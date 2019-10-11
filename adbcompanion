@@ -1,54 +1,23 @@
 #!/bin/bash
 
-startingDirectory=$(pwd)
-binDirectory=""
+# Defining Directories 
+
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+# Defining Commands
+update="$adbCompanionSrc/selfUpdate"
+
+# Defining Global Variables
 deviceID=""
 deviceName=""
 isUpdated="false"
 
-checkoutMaster()
-{
-	cd
-	cd /home/db1044654/bin/adbCompanion/
-	
-	if [[ $isUpdated == "false" ]]; then
-		eatOutput=$(git stash)
-		if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
-			eatOutput=$(git checkout master)
-		fi
-		eatOutput=$(git pull)
-		exec $0 "D3gN0" "$@"
-		exit 1
-	fi
-}
-
 kvbashSetup()
 {
-	# First, there needs to be a place to put the cloned repo.
-	# It is going to go into the /bin directory in users home directory
-	# If a /bin directory exists, cd into it, otherwise, create it then cd 
-	cd
-	binsetup=$(ls | grep -w "bin")
-	
-	if [[ $binsetup == "" ]]; then
-		mkdir bin 
-	fi
-	cd bin/
-	
-	binDirectory=$(pwd)
-	
-	# Need to clone repo for "database" to store key-value pairs.
-	# Check if it has been cloned before.  If it has, just source it,
-	# otherwise, clone repo and source it.
-	kvbashsetup=$(ls | grep -w "kv-bash")
-
-	if [[ $kvbashsetup == "" ]]; then
-		echo -e "Cloning kv-bash from github repo: https://github.com/damphat/kv-bash.git into $binDirectory\n"
-		git clone https://github.com/damphat/kv-bash.git
-		echo
-	fi
-
-	source kv-bash/./kv-bash
+	source $adbCompanionSrc/kv-bash/./kv-bash
 }
 
 inputArgs()
@@ -56,12 +25,12 @@ inputArgs()
 	helpString="\n
 				Usages:\n
 				adbshell -h (--help): Display Help\n
-				adbshell -c (--clear): Clear Saved Names\n
-				adbshell -r (--reset): Clear Saved Names and Remove kv-bash from System\n"
+				adbshell -c (--clear): Clear Saved Names\n"
 	
 	if [[ -z $1 ]]; then
 		return
 	fi
+	
 	
 	for arg in $@; do case $arg in
 		--help|-h)
@@ -73,17 +42,7 @@ inputArgs()
 			echo "Device Names Cleared Successfully"
 			exit
 			;;
-		--reset|-r)
-			kvclear
-			echo "Device Names Cleared Successfully"
-			
-			# erasing kv-bash repo from /bin directory
-			cd $binDirectory
-			rm -rf kv-bash
-			echo "kv-bash removed successfully"
-			exit
-			;;
-		D3gN0)
+		D3gN0 | -nu | --noupdate)
 			isUpdated="true"
 			;;
 		*)
@@ -98,11 +57,9 @@ verify_server()
 {
 	# My server needs to be restarted with each new session
 	# Unsure why, and probably an unneccesary step for most
-	echo "Checking Server Status"
+	echo "Checking Device Permissions"
 	
-	serverstatus=$(adb devices | grep -w "no permissions")
-
-	if [[ $serverstatus != "" ]]; then
+	if [[ $(adb devices | grep -w "no permissions") != "" ]]; then
 		echo "User Currently Lacks Permissions: Restarting Server"
 		eatOutput=$(adb kill-server)
 		eatOutput=$(sudo adb start-server)
@@ -124,7 +81,12 @@ setup()
 {
 	kvbashSetup
 	inputArgs $@
-	checkoutMaster
+	
+	if [[ $isUpdated == "false" ]]; then
+		$update
+		exit 1
+	fi
+	
 	verify_server
 	installZenity
 }
@@ -133,7 +95,7 @@ labelNewDevices()
 {
 	for line in $@; do
 		if [[ $(kvget $line) == "" ]]; then
-			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" )
+			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" 2>/dev/null)
 			
 			if [[ $input == "" ]]; then
 				continue
