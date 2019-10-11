@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd
-cd /home/db1044654/bin/adbCompanion/
+cd ~/bin/adbCompanion/
 	
 eatOutput=$(git stash)
 

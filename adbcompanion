@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Defining Directories 
-
 homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
@@ -10,77 +9,33 @@ adbCompanionSrc="$adbCompanionDir/src/"
 # Defining Commands
 update="$adbCompanionSrc/selfUpdate"
 initialSetup="$adbCompanionSrc/initialSetup"
+envSetup="$adbCompanionSrc/enviromentSetup"
 
 # Defining Global Variables
 deviceID=""
 deviceName=""
-isUpdated="false"
 initialSetupComplete="initialSetupComplete"
 
-source $adbCompanionSrc/kv-bash/./kv-bash
+source $adbCompanionSrc/kv-bash/./kv-bash 
+ 
+trap "kvdel isUpdated" EXIT
 
-inputArgs()
-{
-	helpString="\n
-				Usages:\n
-				adbshell -h (--help): Display Help\n
-				adbshell -c (--clear): Clear Saved Names\n"
-	
-	if [[ -z $1 ]]; then
-		return
-	fi
-	
-	
-	for arg in $@; do case $arg in
-		--help|-h)
-			echo -e $helpString
-			exit
-			;;
-		--clear|-c)
-			kvclear
-			kvset $initialSetupComplete "true"
-			echo "Device Names Cleared Successfully"
-			exit
-			;;
-		D3gN0 | -nu | --noupdate)
-			isUpdated="true"
-			;;
-		*)
-			echo -e "\n$arg is an unsupported command: See reference below"
-			echo -e $helpString
-			exit
-		esac
-	done
-}
-
-verify_server()
-{
-	# My server needs to be restarted with each new session
-	# Unsure why, and probably an unneccesary step for most
-	echo "Checking Device Permissions"
-	
-	if [[ $(adb devices | grep -w "no permissions") != "" ]]; then
-		echo "User Currently Lacks Permissions: Restarting Server"
-		eatOutput=$(adb kill-server)
-		eatOutput=$(sudo adb start-server)
-		echo "ADB Server Reset"
-	fi
-}
+if [[ $(kvget $initialSetupComplete) == "" ]]; then
+	$initialSetup
+fi
 
 setup()
 {	
-	if [[ $(kvget $initialSetupComplete) == "" ]]; then
-		$initialSetup
+	$envSetup $@
+	
+	if [[ $? != 0 ]]; then 
+		exit
 	fi
 	
-	inputArgs $@
-	
-	if [[ $isUpdated == "false" ]]; then
+	if [[ $(kvget isUpdated) != "true" ]]; then
 		$update
-		exit 1
+		exit
 	fi
-	
-	verify_server
 }
 
 labelNewDevices()
@@ -93,14 +48,20 @@ labelNewDevices()
 				continue
 			fi
 			
-			if [[ $(kvget $input) != "" ]]; then
-				zenity --error --text "That Name Already Exists"
+			if [[ $input == [$initialSetupComplete ||  isUpdated] ]]; then
+				zenity --error --text "System Variable: Please Choose Another Name" 2>/dev/null
 				labelNewDevices $@
 				return
 			fi
 			
-			if [[ $input = *" "* ]]; then
-				zenity --error --text "Name Can't Have Spaces"
+			if [[ $(kvget $input) != "" ]]; then
+				zenity --error --text "That Name Already Exists" 2>/dev/null
+				labelNewDevices $@
+				return
+			fi
+			
+			if [[ $input == *" "* ]]; then
+				zenity --error --text "Name Can't Have Spaces" 2>/dev/null
 				labelNewDevices $@
 				return
 			fi
@@ -129,8 +90,7 @@ chooseService()
 			exit
 			;;
 		"${services[1]}")
-			cd
-			cd /scratch/git/AudioSource-Spotify
+			cd ~/scratch/git/AudioSource-Spotify
 			cp-bins-to-target --deviceid $deviceID -spotify
 			adb -s $deviceID shell /opt/Bose/bin/Spotify &
 			echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
