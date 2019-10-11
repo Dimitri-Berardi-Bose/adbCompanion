@@ -2,7 +2,6 @@
 
 # Defining Directories 
 
-startingDirectory=$(pwd)
 homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
@@ -32,6 +31,7 @@ inputArgs()
 		return
 	fi
 	
+	
 	for arg in $@; do case $arg in
 		--help|-h)
 			echo -e $helpString
@@ -59,9 +59,7 @@ verify_server()
 	# Unsure why, and probably an unneccesary step for most
 	echo "Checking Device Permissions"
 	
-	serverstatus=$(adb devices | grep -w "no permissions")
-
-	if [[ $serverstatus != "" ]]; then
+	if [[ $(adb devices | grep -w "no permissions") != "" ]]; then
 		echo "User Currently Lacks Permissions: Restarting Server"
 		eatOutput=$(adb kill-server)
 		eatOutput=$(sudo adb start-server)
