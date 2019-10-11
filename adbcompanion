@@ -18,26 +18,7 @@ isUpdated="false"
 
 kvbashSetup()
 {
-	# First, there needs to be a place to put the cloned repo.
-	# It is going to go into the /bin directory in users home directory
-	# If a /bin directory exists, mkdir will fail
-	# Otherwise, the /bin directory will be created
-	mkdir $binDirectory 2>/dev/null
-	cd $binDirectory
-	
-	# Need to clone repo for "database" to store key-value pairs.
-	# Check if it has been cloned before.  If it has, just source it,
-	# otherwise, clone repo and source it.
-	
-	kvbashsetup=$(ls | grep -w "kv-bash")
-
-	if [[ $kvbashsetup == "" ]]; then
-		echo -e "Cloning kv-bash from github repo: https://github.com/damphat/kv-bash.git into $binDirectory\n"
-		git clone https://github.com/damphat/kv-bash.git
-		echo
-	fi
-
-	source kv-bash/./kv-bash
+	source $adbCompanionSrc/kv-bash/./kv-bash
 }
 
 inputArgs()
@@ -45,8 +26,7 @@ inputArgs()
 	helpString="\n
 				Usages:\n
 				adbshell -h (--help): Display Help\n
-				adbshell -c (--clear): Clear Saved Names\n
-				adbshell -r (--reset): Clear Saved Names and Remove kv-bash from System\n"
+				adbshell -c (--clear): Clear Saved Names\n"
 	
 	if [[ -z $1 ]]; then
 		return
@@ -60,16 +40,6 @@ inputArgs()
 		--clear|-c)
 			kvclear
 			echo "Device Names Cleared Successfully"
-			exit
-			;;
-		--reset|-r)
-			kvclear
-			echo "Device Names Cleared Successfully"
-			
-			# erasing kv-bash repo from /bin directory
-			cd $binDirectory
-			rm -rf kv-bash
-			echo "kv-bash removed successfully"
 			exit
 			;;
 		D3gN0 | -nu | --noupdate)
@@ -87,7 +57,7 @@ verify_server()
 {
 	# My server needs to be restarted with each new session
 	# Unsure why, and probably an unneccesary step for most
-	echo "Checking Server Status"
+	echo "Checking Device Permissions"
 	
 	serverstatus=$(adb devices | grep -w "no permissions")
 
@@ -207,7 +177,7 @@ for line in $devices; do
 done
 
 echo
-ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist);
+ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist 2>/dev/null);
 
 if [[ $ans != "" ]]; then
 	if [[ $(kvget $ans) != "" ]]; then
