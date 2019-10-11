@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+# Defining Global Variables
+initialSetupComplete="initialSetupComplete"
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+inputArgs()
+{
+	helpString="\n
+				Usages:\n
+				adbshell -h (--help): Display Help\n
+				adbshell -c (--clear): Clear Saved Names\n"
+	
+	for arg in $@; do case $arg in
+		--help|-h)
+			echo -e $helpString
+			exit 22
+			;;
+		--clear|-c)
+			kvclear
+			kvset $initialSetupComplete "true"
+			echo "Device Names Cleared Successfully"
+			exit 22
+			;;
+		D3gN0 | -nu | --noupdate)
+			kvset isUpdated "true"
+			;;
+		*)
+			echo -e "\n$arg is an unsupported command: See reference below"
+			echo -e $helpString
+			exit 22
+		esac
+	done
+}
+
+verify_server()
+{
+	# My server needs to be restarted with each new session
+	# Unsure why, and probably an unneccesary step for most
+	echo "Checking Device Permissions"
+	
+	if [[ $(adb devices | grep -w "no permissions") != "" ]]; then
+		echo "User Currently Lacks Permissions: Restarting Server"
+		eatOutput=$(adb kill-server)
+		eatOutput=$(sudo adb start-server)
+		echo "ADB Server Reset"
+	fi
+}
+
+inputArgs $@
+
+if [[ $(kvget isUpdated) == "true" ]]; then
+	verify_server
+fi

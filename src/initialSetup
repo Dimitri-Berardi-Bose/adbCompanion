@@ -1,13 +1,13 @@
 #!/bin/bash
 
+# Defining Directories
 homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
 adbCompanionSrc="$adbCompanionDir/src/"
 
+# Defining Global Variables
 initialSetupComplete="initialSetupComplete"
-
-# Probably going to need to chmod a bunch of stuff
 
 source $adbCompanionSrc/kv-bash/./kv-bash
 
