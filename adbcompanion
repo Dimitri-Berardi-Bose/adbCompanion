@@ -9,16 +9,15 @@ adbCompanionSrc="$adbCompanionDir/src/"
 
 # Defining Commands
 update="$adbCompanionSrc/selfUpdate"
+initialSetup="$adbCompanionSrc/initialSetup"
 
 # Defining Global Variables
 deviceID=""
 deviceName=""
 isUpdated="false"
+initialSetupComplete="initialSetupComplete"
 
-kvbashSetup()
-{
-	source $adbCompanionSrc/kv-bash/./kv-bash
-}
+source $adbCompanionSrc/kv-bash/./kv-bash
 
 inputArgs()
 {
@@ -39,6 +38,7 @@ inputArgs()
 			;;
 		--clear|-c)
 			kvclear
+			kvset $initialSetupComplete "true"
 			echo "Device Names Cleared Successfully"
 			exit
 			;;
@@ -67,19 +67,12 @@ verify_server()
 	fi
 }
 
-installZenity()
-{
-	downZenity=$(which zenity)
-	
-	if [[ $downZenity == "" ]]; then
-		echo
-		sudo apt-get install zenity
-	fi
-}
-
 setup()
-{
-	kvbashSetup
+{	
+	if [[ $(kvget $initialSetupComplete) == "" ]]; then
+		$initialSetup
+	fi
+	
 	inputArgs $@
 	
 	if [[ $isUpdated == "false" ]]; then
@@ -88,7 +81,6 @@ setup()
 	fi
 	
 	verify_server
-	installZenity
 }
 
 labelNewDevices()

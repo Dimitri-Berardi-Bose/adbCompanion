@@ -1,0 +1,24 @@
+#!/bin/bash
+
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+initialSetupComplete="initialSetupComplete"
+
+# Probably going to need to chmod a bunch of stuff
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+installZenity()
+{	
+	if [[ $(which zenity) == "" ]]; then
+		#ask for user permission
+		sudo apt-get install zenity
+	fi
+}
+
+ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion
+
+kvset $initialSetupComplete "true"
