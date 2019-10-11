@@ -1,26 +1,16 @@
 #!/bin/bash
 
+# Defining Directories 
+
 startingDirectory=$(pwd)
-binDirectory=""
+binDirectory="~/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+# Defining Global Variables
 deviceID=""
 deviceName=""
 isUpdated="false"
-
-checkoutMaster()
-{
-	cd
-	cd /home/db1044654/bin/adbCompanion/
-	
-	if [[ $isUpdated == "false" ]]; then
-		eatOutput=$(git stash)
-		if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
-			eatOutput=$(git checkout master)
-		fi
-		eatOutput=$(git pull)
-		exec $0 "D3gN0" "$@"
-		exit 1
-	fi
-}
 
 kvbashSetup()
 {
@@ -124,7 +114,12 @@ setup()
 {
 	kvbashSetup
 	inputArgs $@
-	checkoutMaster
+	
+	if [[ $isUpdated == "false" ]]; then
+		/home/db1044654/bin/adbCompanion/src/selfUpdate
+		exit 1
+	fi
+	
 	verify_server
 	installZenity
 }
@@ -166,7 +161,7 @@ chooseService()
 	services=("$adbShell")
 	services+=("$cpBinsSpotify")
 	services+=("$collectLogs")
-	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
+	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}");
 	
 	echo
 	case "$service" in
@@ -213,7 +208,7 @@ for line in $devices; do
 done
 
 echo
-ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist 2>/dev/null);
+ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist);
 
 if [[ $ans != "" ]]; then
 	if [[ $(kvget $ans) != "" ]]; then
