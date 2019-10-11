@@ -1,14 +1,16 @@
 # adbCompanion
+<br><br>
 
-Requirements
-	- ~/bin/ directory must exist
+## Requirements
+	1. ~/bin/ directory must exist
 
-Installation:
-	- Clone Repo into ~/bin/ directory
-	- Navigate to ~/bin/adbCompanion/ directory
-	- Run "./adbcompanion"
+## Installation
+	1. Clone Repo into ~/bin/ directory
+	2. Navigate to ~/bin/adbCompanion/ directory
+	3. Run "./adbcompanion"
 	
-Usage:
+## Usage
 	- Run adbCompanion from any directory to do the following:
 
-This project uses kv-bash under MIT License: Copyright (c) 2017 Phat (https://github.com/damphat)
+<br><br>
+This project uses **kv-bash** under MIT License: Copyright (c) 2017 Phat (https://github.com/damphat)
