@@ -48,7 +48,7 @@ labelNewDevices()
 				continue
 			fi
 			
-			if [[ $input == [$initialSetupComplete ||  isUpdated] ]]; then
+			if [ $input == [ $initialSetupComplete || isUpdated ] ]; then
 				zenity --error --text "System Variable: Please Choose Another Name" 2>/dev/null
 				labelNewDevices $@
 				return
@@ -76,7 +76,7 @@ chooseService()
 {
 	adbShell="adb shell"
 	cpBinsSpotify="cp-bins-to-target [Spotify]"
-	collectLogs="start collecting log to /bin/"
+	collectLogs="start collecting log to /scratch/logs/"
 	
 	services=("$adbShell")
 	services+=("$cpBinsSpotify")
@@ -112,7 +112,7 @@ setup $@
 devices=$(adb devices | grep -w "device" | cut -c -7)
 
 if [[ $devices == "" ]]; then
-	zenity --error --text "No Devices Plugged In"
+	zenity --error --text "No Devices Plugged In" 2>/dev/null
 	exit
 fi
 

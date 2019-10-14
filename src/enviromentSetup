@@ -8,19 +8,21 @@ adbCompanionSrc="$adbCompanionDir/src/"
 
 # Defining Global Variables
 initialSetupComplete="initialSetupComplete"
+helpString="
+Usages: adbcompanion [OPTIONS]
+  Options:
+     -h  | --help  : Prints this help message and exits
+     -c  | --clear : Clear saved names and exits
+     -nu | --noupdate : Don't update master
+"
 
 source $adbCompanionSrc/kv-bash/./kv-bash
 
 inputArgs()
-{
-	helpString="\n
-				Usages:\n
-				adbshell -h (--help): Display Help\n
-				adbshell -c (--clear): Clear Saved Names\n"
-	
+{	
 	for arg in $@; do case $arg in
 		--help|-h)
-			echo -e $helpString
+			echo -e "$helpString"
 			exit 22
 			;;
 		--clear|-c)
@@ -34,7 +36,7 @@ inputArgs()
 			;;
 		*)
 			echo -e "\n$arg is an unsupported command: See reference below"
-			echo -e $helpString
+			echo -e "$helpString"
 			exit 22
 		esac
 	done
@@ -54,8 +56,12 @@ verify_server()
 	fi
 }
 
+# Handle all input arguments
 inputArgs $@
 
+# Only verify server after updating version, otherwise it is done twice
 if [[ $(kvget isUpdated) == "true" ]]; then
 	verify_server
 fi
+
+
