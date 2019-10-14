@@ -5,6 +5,7 @@ homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
 adbCompanionSrc="$adbCompanionDir/src/"
+adbServices="$adbCompanionDir/services/"
 
 # Defining Commands
 update="$adbCompanionSrc/selfUpdate"
@@ -73,36 +74,14 @@ labelNewDevices()
 }
 
 chooseService()
-{
-	adbShell="adb shell"
-	cpBinsSpotify="cp-bins-to-target [Spotify]"
-	collectLogs="start collecting log to /scratch/logs/"
-	
-	services=("$adbShell")
-	services+=("$cpBinsSpotify")
-	services+=("$collectLogs")
+{	
+	for script in $adbServices/*; do
+		services+=($(basename $script))
+	done
+
 	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
 	
-	echo
-	case "$service" in
-		"${services[0]}")
-			adb -s $deviceID shell
-			exit
-			;;
-		"${services[1]}")
-			cd ~/scratch/git/AudioSource-Spotify
-			cp-bins-to-target --deviceid $deviceID -spotify
-			adb -s $deviceID shell /opt/Bose/bin/Spotify &
-			echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
-			exit
-			;;
-		"${services[2]}")
-			adblog -s $deviceID -l
-			;;
-		*)
-			exit
-			;;
-	esac
+	$adbServices/$service $deviceID
 }
 
 ######## Main Script Starts Here #########

@@ -40,4 +40,4 @@ ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion
 
 kvset $initialSetupComplete "true"
 
-mkdir -p ~/scratch/logs/
+mkdir -p /scratch/logs/
