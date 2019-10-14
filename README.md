@@ -12,9 +12,9 @@
 	
 ## Usage
 	- Run "adbcompanion" from any directory to do the following:
-		- adbshell
-		- cp-bins-to-target
-		- adblog
+	    - adbshell
+	    - cp-bins-to-target
+	    - adblog
 
 <br><br>
 This project uses **kv-bash** under MIT License: Copyright (c) 2017 Phat (https://github.com/damphat)
