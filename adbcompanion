@@ -55,7 +55,9 @@ chooseService()
 
 	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
 	
-	$adbServices/$service $deviceID
+	if [[ $ans != "" ]]; then
+		$adbServices/$service $deviceID
+	fi
 }
 
 ######## Main Script Starts Here #########
