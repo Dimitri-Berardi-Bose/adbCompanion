@@ -58,6 +58,8 @@ verify_server()
 	echo
 }
 
+######## Main Script Starts Here #########
+
 # Handle all input arguments
 inputArgs $@
 
