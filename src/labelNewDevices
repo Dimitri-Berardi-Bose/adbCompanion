@@ -10,6 +10,7 @@ source $adbCompanionSrc/kv-bash/./kv-bash
 
 systemVariables+=("initialSetupComplete")
 systemVariables+=("isUpdated")
+systemVariables+=("mostRecentBranch")
 
 labelNewDevices()
 {

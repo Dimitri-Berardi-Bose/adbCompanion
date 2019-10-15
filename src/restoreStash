@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+######## Main Script Starts Here #########
+
+cd $adbCompanionDir
+
+case $(kvget mostRecentBranch) in
+	$(git branch | grep \* | cut -d ' ' -f2))
+		return
+		;;
+	"")
+		return
+		;;
+	*)
+		git checkout $(kvget mostRecentBranch)
+		;;
+done

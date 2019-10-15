@@ -21,7 +21,12 @@ devices=$(adb devices | grep -w "device" | cut -c -7)
 
 source $adbCompanionSrc/kv-bash/./kv-bash 
  
-trap "kvdel isUpdated" EXIT
+finish()
+{
+	kvdel isUpdated
+}
+
+trap finish EXIT
 
 if [[ $(kvget $initialSetupComplete) != "true" ]]; then
 	$initialSetup

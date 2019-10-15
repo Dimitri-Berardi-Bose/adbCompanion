@@ -1,11 +1,24 @@
 #!/bin/bash
 
-cd ~/bin/adbCompanion/
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+######## Main Script Starts Here #########
+
+cd $adbCompanionDir
 	
 eatOutput=$(git stash)
 
 if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
-	eatOutput=$(git checkout master)
+	eatOutput=$(git checkout master) 
+	kvset mostRecentBranch $(git branch | grep \* | cut -d ' ' -f2)
+else
+	kvset mostRecentBranch master
 fi
 
 eatOutput=$(git pull)
