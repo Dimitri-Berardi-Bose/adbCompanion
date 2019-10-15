@@ -1,5 +1,22 @@
 #!/bin/bash
 
+#################################################################
+# This entire file should only ever be called once after cloning 
+# and running the repo for the first time.  This file sets up 
+# pre-req's for successful use of this tool.  
+# It does the following things:
+#  - Installs Zenity, if not already installed, which is used 
+#    for the GUI interface. This should be standard on any 
+#    Ubuntu machine, but this runs just in case
+#  - Creates a soft link named "adbcompanion" in the user's 
+#    ~/bin/ directory pointing at the adbcompanion script in 
+#    the repo. This allows the script to be called from any
+#    directory (assuming their ~/bin/ is in their PATH) 
+#    without having to update their path.
+#  - Creates a ~/scratch/logs/ directory, given that the adblog
+#    script is written to put logs into that directory
+#################################################################
+
 # Defining Directories
 homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
@@ -22,3 +39,5 @@ installZenity()
 ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion
 
 kvset $initialSetupComplete "true"
+
+mkdir -p /scratch/logs/

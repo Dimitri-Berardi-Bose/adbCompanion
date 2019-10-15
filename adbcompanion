@@ -5,22 +5,25 @@ homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
 adbCompanionSrc="$adbCompanionDir/src/"
+adbServices="$adbCompanionDir/services/"
 
 # Defining Commands
 update="$adbCompanionSrc/selfUpdate"
 initialSetup="$adbCompanionSrc/initialSetup"
 envSetup="$adbCompanionSrc/enviromentSetup"
+labelNewDevices="$adbCompanionSrc/labelNewDevices"
 
 # Defining Global Variables
 deviceID=""
 deviceName=""
 initialSetupComplete="initialSetupComplete"
+devices=$(adb devices | grep -w "device" | cut -c -7)
 
 source $adbCompanionSrc/kv-bash/./kv-bash 
  
 trap "kvdel isUpdated" EXIT
 
-if [[ $(kvget $initialSetupComplete) == "" ]]; then
+if [[ $(kvget $initialSetupComplete) != "true" ]]; then
 	$initialSetup
 fi
 
@@ -38,85 +41,27 @@ setup()
 	fi
 }
 
-labelNewDevices()
-{
-	for line in $@; do
-		if [[ $(kvget $line) == "" ]]; then
-			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" 2>/dev/null)
-			
-			if [[ $input == "" ]]; then
-				continue
-			fi
-			
-			if [[ $input == [$initialSetupComplete ||  isUpdated] ]]; then
-				zenity --error --text "System Variable: Please Choose Another Name" 2>/dev/null
-				labelNewDevices $@
-				return
-			fi
-			
-			if [[ $(kvget $input) != "" ]]; then
-				zenity --error --text "That Name Already Exists" 2>/dev/null
-				labelNewDevices $@
-				return
-			fi
-			
-			if [[ $input == *" "* ]]; then
-				zenity --error --text "Name Can't Have Spaces" 2>/dev/null
-				labelNewDevices $@
-				return
-			fi
-			
-			kvset $input $line
-			kvset $line $input
-		fi
-	done
-}
-
 chooseService()
-{
-	adbShell="adb shell"
-	cpBinsSpotify="cp-bins-to-target [Spotify]"
-	collectLogs="start collecting log to /bin/"
-	
-	services=("$adbShell")
-	services+=("$cpBinsSpotify")
-	services+=("$collectLogs")
+{	
+	for script in $adbServices/*; do
+		services+=($(basename $script))
+	done
+
 	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
 	
-	echo
-	case "$service" in
-		"${services[0]}")
-			adb -s $deviceID shell
-			exit
-			;;
-		"${services[1]}")
-			cd ~/scratch/git/AudioSource-Spotify
-			cp-bins-to-target --deviceid $deviceID -spotify
-			adb -s $deviceID shell /opt/Bose/bin/Spotify &
-			echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
-			exit
-			;;
-		"${services[2]}")
-			adblog -s $deviceID -l
-			;;
-		*)
-			exit
-			;;
-	esac
+	$adbServices/$service $deviceID
 }
 
 ######## Main Script Starts Here #########
 
 setup $@
 
-devices=$(adb devices | grep -w "device" | cut -c -7)
-
 if [[ $devices == "" ]]; then
-	zenity --error --text "No Devices Plugged In"
+	zenity --error --text "No Devices Plugged In" 2>/dev/null
 	exit
 fi
 
-labelNewDevices $devices
+$labelNewDevices $devices
 
 for line in $devices; do
 	if [[ $(kvget $line) != "" ]]; then  
@@ -126,7 +71,6 @@ for line in $devices; do
 	fi
 done
 
-echo
 ans=$(zenity --title "adb shell GUI" --list --text "Choose a Device" --column "Device" $devlist 2>/dev/null);
 
 if [[ $ans != "" ]]; then
