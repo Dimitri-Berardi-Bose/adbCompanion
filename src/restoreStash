@@ -28,4 +28,12 @@ restoreBranch()
 }
 
 restoreBranch
-git stash pop
+
+case $(kvget isStashPopped) in
+	"true")
+		kvset isStashPopped "false"	
+		;;
+	"false")
+		git stash pop
+		;;
+esac
