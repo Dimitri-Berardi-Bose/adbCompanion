@@ -12,14 +12,19 @@ source $adbCompanionSrc/kv-bash/./kv-bash
 
 cd $adbCompanionDir
 
-case $(kvget mostRecentBranch) in
-	$(git branch | grep \* | cut -d ' ' -f2))
-		return
-		;;
-	"")
-		return
-		;;
-	*)
-		git checkout $(kvget mostRecentBranch)
-		;;
-esac
+restoreBranch()
+{
+	case $(kvget mostRecentBranch) in
+		$(git branch | grep \* | cut -d ' ' -f2))
+			return
+			;;
+		"")
+			return
+			;;
+		*)
+			git checkout $(kvget mostRecentBranch)
+			;;
+	esac	
+}
+
+restoreBranch
