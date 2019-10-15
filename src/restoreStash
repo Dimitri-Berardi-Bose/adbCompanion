@@ -22,4 +22,4 @@ case $(kvget mostRecentBranch) in
 	*)
 		git checkout $(kvget mostRecentBranch)
 		;;
-done
+esac
