@@ -15,8 +15,8 @@ cd $adbCompanionDir
 eatOutput=$(git stash)
 
 if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master2" ]]; then
-	eatOutput=$(git checkout master2) 
 	kvset mostRecentBranch $(git branch | grep \* | cut -d ' ' -f2)
+	eatOutput=$(git checkout master2)
 else
 	kvset mostRecentBranch master2
 fi
