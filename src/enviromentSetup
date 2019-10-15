@@ -54,6 +54,8 @@ verify_server()
 		eatOutput=$(sudo adb start-server)
 		echo "ADB Server Reset"
 	fi
+	
+	echo
 }
 
 # Handle all input arguments

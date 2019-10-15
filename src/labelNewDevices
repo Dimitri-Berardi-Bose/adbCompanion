@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+systemVariables+=("initialSetupComplete")
+systemVariables+=("isUpdated")
+
+labelNewDevices()
+{
+	for line in $@; do
+		if [[ $(kvget $line) == "" ]]; then
+			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" 2>/dev/null)
+			
+			if [[ $input == "" ]]; then
+				continue
+			fi
+			
+			for systemVariable in ${systemVariables[@]}; do
+				if [[ $input == $systemVariable ]]; then
+					zenity --error --text "System Variable: Please Choose Another Name" 2>/dev/null
+					labelNewDevices $@
+					return
+				fi
+			done
+			
+			if [[ $(kvget $input) != "" ]]; then
+				zenity --error --text "That Name Already Exists" 2>/dev/null
+				labelNewDevices $@
+				return
+			fi
+			
+			if [[ $input == *" "* ]]; then
+				zenity --error --text "Name Can't Have Spaces" 2>/dev/null
+				labelNewDevices $@
+				return
+			fi
+			
+			kvset $input $line
+			kvset $line $input
+		fi
+	done
+}
+
+labelNewDevices $@
