@@ -21,7 +21,7 @@ else
 	kvset mostRecentBranch master2
 fi
 
-eatOutput=$(git pull)
+#eatOutput=$(git pull)
 exec adbcompanion "D3gN0" "$@"
 
 exit 1
