@@ -28,3 +28,4 @@ restoreBranch()
 }
 
 restoreBranch
+git stash pop
