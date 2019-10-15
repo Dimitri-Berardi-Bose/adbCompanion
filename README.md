@@ -15,8 +15,8 @@
 	    - adb_shell
 	    - cp-bins-to-target-spotify
 	    - adblog
-	    
-	More Services Coming Soon (or create your own)
+
+**More Services Coming Soon (or create your own)**
 	    
 ## Key Features
 	- Multiple Devices w/ Unique Naming
