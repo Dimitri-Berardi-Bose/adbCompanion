@@ -35,5 +35,6 @@ case $(kvget isStashPopped) in
 		;;
 	"false")
 		git stash pop
+		kvset isStashPopped "true"
 		;;
 esac
