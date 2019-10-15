@@ -24,6 +24,7 @@ source $adbCompanionSrc/kv-bash/./kv-bash
 finish()
 {
 	kvdel isUpdated
+	$adbCompanionSrc/restoreStash
 }
 
 trap finish EXIT
