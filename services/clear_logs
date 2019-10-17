@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd /scratch/logs/
+
+lastLog=$(zenity --question --ellipsize --icon-name="edit-delete" --text "Are you sure you\nwant to delete all logs in\nyour '/scratch/logs/' directory?" 2>/dev/null);
+	
+case $? in
+	"0")
+		rm -rf *	
+		;;
+	"1")
+		;;
+esac 
