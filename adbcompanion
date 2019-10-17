@@ -56,8 +56,10 @@ chooseService()
 	for script in $adbServices/*; do
 		services+=($(basename $script))
 	done
+	
+	IFS=$'\n' GLOBIGNORE='*' sortedServices=($(printf '%s\n' ${services[@]} | awk '{ print length($0) " " $0; }' | sort -n | cut -d ' ' -f 2-))
 
-	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${services[@]}" 2>/dev/null);
+	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${sortedServices[@]}" 2>/dev/null);
 	
 	if [[ $service != "" ]]; then
 		$adbServices/$service $deviceID
