@@ -1,0 +1,32 @@
+#!/bin/bash
+
+deviceID=$1
+
+musicServices+=("amazon")
+musicServices+=("deezer")
+musicServices+=("iheart")
+musicServices+=("siriusxm")
+musicServices+=("spotify")
+
+cpBins()
+{
+	dir=$1
+	musicService=$2
+	musicServiceCap=${musicService^}
+
+	cd /scratch/git/$dir
+	cp-bins-to-target --deviceid $deviceID --$musicService
+	adb -s $deviceID shell /opt/Bose/bin/$musicServiceCap &
+	echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
+}
+
+musicService=$(zenity --title "Music Services Bins" --list --text "Choose a Music Service" --column "Music Services" "${musicServices[@]}" 2>/dev/null);
+
+case $musicService in
+	"spotify")
+		cpBins AudioSource-Spotify $musicService
+		;;
+	*)
+		cpBins AudioSource-MusicServices $musicService
+		;;
+esac

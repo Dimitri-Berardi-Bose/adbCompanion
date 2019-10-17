@@ -1,8 +1,0 @@
-#!/bin/bash
-
-deviceID=$1
-
-cd /scratch/git/AudioSource-Spotify
-cp-bins-to-target --deviceid $deviceID -spotify
-adb -s $deviceID shell /opt/Bose/bin/Spotify &
-echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
