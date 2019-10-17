@@ -23,8 +23,10 @@ source $adbCompanionSrc/kv-bash/./kv-bash
  
 finish()
 {
-	kvdel isUpdated
-	$adbCompanionSrc/restoreStash
+	if [[ $(kvget isUpdated) == "true" ]]; then
+		$adbCompanionSrc/restoreStash
+		kvdel isUpdated
+	fi
 }
 
 trap finish EXIT

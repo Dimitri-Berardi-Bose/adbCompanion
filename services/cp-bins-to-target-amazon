@@ -1,0 +1,8 @@
+#!/bin/bash
+
+deviceID=$1
+
+cd /scratch/git/AudioSource-MusicServices
+cp-bins-to-target --deviceid $deviceID --amazon
+adb -s $deviceID shell /opt/Bose/bin/Amazon &
+echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
