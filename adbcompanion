@@ -27,6 +27,8 @@ finish()
 		$adbCompanionSrc/restoreStash
 		kvdel isUpdated
 	fi
+	
+	kvdel noUpdate
 }
 
 trap finish EXIT
@@ -43,7 +45,7 @@ setup()
 		exit
 	fi
 	
-	if [[ $(kvget isUpdated) != "true" ]]; then
+	if [[ $(kvget isUpdated) != "true" && $(kvget noUpdate) != "true" ]]; then
 		$update
 		exit
 	fi
