@@ -40,6 +40,4 @@ ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion
 
 kvset $initialSetupComplete "true"
 
-kvset gitStashPopped "false"
-
 mkdir -p /scratch/logs/
