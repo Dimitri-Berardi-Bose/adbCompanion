@@ -1,0 +1,68 @@
+#!/bin/bash
+
+deviceID=$1
+
+musicServices+=("Amazon")
+musicServices+=("Deezer")
+musicServices+=("IHeart")
+musicServices+=("SiriusXM")
+musicServices+=("Spotify")
+
+dir=""
+musicService=""
+musicServiceExe=""
+
+makeFunct() {
+cd /scratch/git/$dir
+make cfg=Release sdk=qc8017_32
+}
+
+build() {
+	makeFunct
+
+	if [[ $? == 2 ]]; then
+		make clean
+		build
+	fi
+}
+
+buildFirst() {
+	build=$(zenity --question --icon-name="package-x-generic" --text "Build for Speaker First?\ni.e. 'cfg=Release sdk=qc8017_32'" 2>/dev/null);
+	case $? in
+		"0")
+			build
+			;;
+		"1")
+			;;
+	esac
+}
+
+cpBins() {
+	cd /scratch/git/$dir
+	cp-bins-to-target --deviceid $deviceID --$musicService
+	adb -s $deviceID shell /opt/Bose/bin/$musicServiceExe &
+	echo -e "\nYou Should Close This Tab ($ exit) and Open a New One (Ctrl+Shift+T) To Avoid Debug Printouts\n"
+}
+
+musicServiceExe=$(zenity --title "Music Services Bins" --list --text "Choose a Music Service" --column "Music Services" "${musicServices[@]}" 2>/dev/null);
+musicService=${musicServiceExe,,}
+
+case $musicService in
+	"")
+		exit
+		;;
+	"spotify")
+		dir="AudioSource-Spotify"
+		buildFirst 
+		cpBins
+		;;
+	*)
+		dir="AudioSource-MusicServices"
+		buildFirst
+		cpBins
+		;;
+esac
+
+
+
+

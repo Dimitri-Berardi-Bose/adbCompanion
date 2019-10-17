@@ -31,8 +31,11 @@ inputArgs()
 			echo "Device Names Cleared Successfully"
 			exit 22
 			;;
-		D3gN0 | -nu | --noupdate)
+		D3gN0)
 			kvset isUpdated "true"
+			;;
+		-nu | --noupdate)
+			kvset noUpdate "true"
 			;;
 		*)
 			echo -e "\n$arg is an unsupported command: See reference below"
@@ -64,8 +67,7 @@ verify_server()
 inputArgs $@
 
 # Only verify server after updating version, otherwise it is done twice
-if [[ $(kvget isUpdated) == "true" ]]; then
+if [[ $(kvget isUpdated) == "true" || $(kvget noUpdate == "true") ]]; then
 	verify_server
 fi
-
 
