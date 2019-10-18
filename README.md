@@ -3,7 +3,7 @@
 
 ## Requirements
 	1. ~/bin/ directory must exist
-	2. To run from anywhere, your ~/bin/ directory must be in your PATH
+	2. To run from anywhere, users ~/bin/ directory must be in users PATH
 
 ## Installation
 	1. Clone Repo into ~/bin/ directory
@@ -11,10 +11,28 @@
 	3. Run "./adbcompanion"
 	
 ## Usage
-	- Run "adbcompanion" from any directory to do the following:
+	1. Plug in any number of adb-enabled devices
+	2. Give device(s) a unique name (Only neccessary the first time a device is plugged in)
+	3. Run "adbcompanion" from any directory to do the following
+	    - adb_log
+	        - Starts collecting logs to terminal, and to /scratch/logs/
+		- When log collection is terminated (ctrl+c/ctrl+z), user
+		  will be given the option to open the log in a text editor
+	    - last_log
+	        - Opens the last log collected to users /scratch/logs/ directory
 	    - adb_shell
-	    - cp-bins-to-target-spotify
-	    - adblog
+	    	- Opens an adb shell for users specified device
+	    - clear_logs
+	    	- Empties users /scratch/logs/ directory
+	    - cp-bins-to-target
+	        - Facilitates copying binaries to users specified device
+		- Support the following music services:
+		    - Spotify
+		    - Amazon Music
+		    - SiriusXM
+		    - Deezer
+		    - IHeart Radio
+		- Gives user the option to build for "sdk=Release cfg=qc8017_32" first
  
 	**More Services Coming Soon (or create your own)**
 
