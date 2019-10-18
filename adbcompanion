@@ -20,7 +20,7 @@ initialSetupComplete="initialSetupComplete"
 devices=$(adb devices | grep -w "device" | cut -c -7)
 
 source $adbCompanionSrc/kv-bash/./kv-bash 
- 
+
 finish()
 {
 	if [[ $(kvget isUpdated) == "true" ]]; then
@@ -53,13 +53,17 @@ setup()
 
 chooseService()
 {	
+	for i in $adbServices/*' '*; do mv "$i" `echo $i | sed -e 's/ /_/g'`; done
+	
 	for script in $adbServices/*; do
 		services+=($(basename $script))
 	done
 	
 	IFS=$'\n' GLOBIGNORE='*' sortedServices=($(printf '%s\n' ${services[@]} | awk '{ print length($0) " " $0; }' | sort -n | cut -d ' ' -f 2-))
+	
+	declare -i height=$(( 120+20*(${#services[@]} + 1) ))
 
-	service=$(zenity --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${sortedServices[@]}" 2>/dev/null);
+	service=$(zenity --height=$height --width=300 --title "Services" --list --text "Choose a Service on $deviceName" --column "Services" "${sortedServices[@]}" 2>/dev/null);
 	
 	if [[ $service != "" ]]; then
 		$adbServices/$service $deviceID

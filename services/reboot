@@ -1,0 +1,5 @@
+#!/bin/bash
+
+deviceID=$1
+
+adb -s $deviceID shell reboot
