@@ -4,4 +4,4 @@ FILE_COUNT=1
 
 sedparam='p'
 
-gedit `ls -t /scratch/logs/* | sed -n $FILE_COUNT$sedparam`&
+vim `ls -t /scratch/logs/* | sed -n $FILE_COUNT$sedparam`&

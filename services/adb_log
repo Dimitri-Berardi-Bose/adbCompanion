@@ -2,7 +2,7 @@
 
 deviceID=$1
 
-# Defining Directories 
+# Defining Directories
 homeDirectory="$HOME"
 binDirectory="$homeDirectory/bin/"
 adbCompanionDir="$binDirectory/adbCompanion/"
@@ -12,7 +12,7 @@ last_log="$adbServices/last_log"
 
 finish() {
 	lastLog=$(zenity --question --ellipsize --icon-name="document-open" --text "\nWould you like to \nopen the last log?" 2>/dev/null);
-	
+
 	case $? in
 		"0")
 			$last_log
