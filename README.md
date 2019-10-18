@@ -11,7 +11,9 @@
 	3. Run "./adbcompanion"
 	
 ## Usage
-	- Run "adbcompanion" from any directory to do the following (for any adb-enabled device currently plugged in):
+	1. Plug in any number of adb-enabled devices
+	2. Give device(s) a unique name (Only neccessary the first time a device is plugged in)
+	3. Run "adbcompanion" from any directory to do the following
 	    - adb_log
 	        - Starts collecting logs to terminal, and to /scratch/logs/
 		- When log collection is terminated (ctrl+c/ctrl+z), user
