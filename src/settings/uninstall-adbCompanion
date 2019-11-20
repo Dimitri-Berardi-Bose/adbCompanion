@@ -7,8 +7,8 @@ adbCompanionDir="$binDirectory/adbCompanion/"
 adbCompanionSrc="$adbCompanionDir/src/"
 
 cd $homeDirectory
-sudo rm -rf .kvbash
-sudo rm -rf .kvbash_system
+sudo rm -rf .kv-bash
+sudo rm -rf .kv-bash-system
 
 cd $binDirectory
 unlink adbcompanion
