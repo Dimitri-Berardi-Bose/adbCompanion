@@ -51,7 +51,14 @@
 	    
 	- Accessible from any Directory (above requirements must be met for this feature)
 	    - No need to manually update your PATH, adbCompanion will be accessible 
-	      from any directory after inital run  
+	      from any directory after inital run
+
+	- Settings for Complete Control (can be accessed by running "adbcompanion -s")
+	    - Settings currently include:
+	        - Toggle Auto-Update
+		- Clear Device Names
+		- Uninstall adbCompanion
+		- Choose Preferred Editor
 
 <br><br>
 This project uses **kv-bash** under MIT License: Copyright (c) 2017 Phat (https://github.com/damphat)
