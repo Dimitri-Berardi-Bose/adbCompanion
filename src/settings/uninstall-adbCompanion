@@ -11,5 +11,5 @@ sudo rm -rf .kvbash
 sudo rm -rf .kvbash_system
 
 cd $binDirectory
-unlink adbCompanion
+unlink adbcompanion
 sudo rm -rf adbCompanion
