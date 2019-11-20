@@ -12,8 +12,12 @@ helpString="
 Usages: adbcompanion [OPTIONS]
   Options:
      -h  | --help  : Prints this help message and exits
-     -c  | --clear : Clear saved names and exits
-     -nu | --noupdate : Don't update master
+     -nu | --noupdate : Don't update master (one-time)
+     -s  | --settings : Change settings including:
+                          - Toggle Auto-Update
+                          - Clear Device Names
+                          - Uninstall adbCompanion
+                          - Choose Preferred Editor
 "
 
 source $adbCompanionSrc/kv-bash/./kv-bash
@@ -31,7 +35,7 @@ inputArgs()
 		-nu | --noupdate)
 			kvset_system noUpdate "true"
 			;;
-		-s)
+		-s | --settings)
 			$adbCompanionSrc/setSettings
 			exit 22
 			;;
