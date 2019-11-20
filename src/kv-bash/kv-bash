@@ -38,6 +38,7 @@
 ########################
 
 KV_USER_DIR="$HOME/.kv-bash"
+KV_SYSTEM_DIR="$HOME/.kv-bash-system"
 
 ########################
 # LOCAL FUNCTIONS
@@ -145,3 +146,59 @@ kvlist() {
 kvclear() {
 	rm -rf "$KV_USER_DIR"
 }
+
+# System Functions 
+
+# Usage: kvget <key>
+kvget_system() {
+	key="$1"
+	kv_validate_key "$key" || {
+		kv_echo_err_box 'invalid param "key"' 'kvget()'
+		return 1
+	}
+	VALUE="$([ -f "$KV_SYSTEM_DIR/$key" ] && cat "$KV_SYSTEM_DIR/$key")"
+	echo "$VALUE"
+	
+	[ "$VALUE" != "" ]
+}
+
+# Usage: kvset <key> [value] 
+kvset_system() {
+	key="$1"
+	value="$2"
+	kv_validate_key "$key" || {
+		kv_echo_err_box 'invalid param "key"' 'kvset()'
+		return 1
+	}
+	test -d "$KV_SYSTEM_DIR" || mkdir "$KV_SYSTEM_DIR"
+	echo "$value" > "$KV_SYSTEM_DIR/$key"
+}
+
+# Usage: kvdel <key>
+kvdel_system() {
+	key="$1"
+	kv_validate_key "$key" || {
+		kv_echo_err_box 'invalid param "key"' 'kvdel()'
+		return 1
+	}
+	test -f "$KV_SYSTEM_DIR/$key" && rm -f "$KV_SYSTEM_DIR/$key"
+}
+
+# list all key/value pairs to stdout
+# Usage: kvlist
+kvlist_system() {
+	for i in "$KV_SYSTEM_DIR/"*; do
+		if [ -f "$i" ]; then
+			key="$(basename "$i")"
+			echo "$key" "$(kvget "$key")"
+		fi
+	done 
+}
+
+# clear all key/value pairs in database
+# Usage: kvclear
+kvclear_system() {
+	rm -rf "$KV_SYSTEM_DIR"
+}
+
+

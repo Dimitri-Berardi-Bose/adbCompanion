@@ -25,17 +25,15 @@ inputArgs()
 			echo -e "$helpString"
 			exit 22
 			;;
-		--clear|-c)
-			kvclear
-			kvset $initialSetupComplete "true"
-			echo "Device Names Cleared Successfully"
-			exit 22
-			;;
 		D3gN0)
-			kvset isUpdated "true"
+			kvset_system isUpdated "true"
 			;;
 		-nu | --noupdate)
-			kvset noUpdate "true"
+			kvset_system noUpdate "true"
+			;;
+		-s)
+			$adbCompanionSrc/setSettings
+			exit 22
 			;;
 		*)
 			echo -e "\n$arg is an unsupported command: See reference below"
@@ -61,13 +59,42 @@ verify_server()
 	echo
 }
 
+setupEditor() {
+	if [[ $(kvget_system preferredEditor) == "" ]]; then
+		$adbCompanionSrc/settings/preferred-editor
+	fi 
+}
+
+versioning() {
+
+	# GT version must be 1st argument
+	version_gt() { test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1"; }
+
+	version=$(cat $adbCompanionSrc/version)
+
+	case $(kvget_system version) in
+		"")
+			kvclear
+			kvset_system version $(cat $adbCompanionSrc/version)
+			echo "Due to upgrades in the system, you will need to name your devices again"
+			echo 
+			;;
+	esac
+}
+
+
+
 ######## Main Script Starts Here #########
+
+versioning
 
 # Handle all input arguments
 inputArgs $@
 
 # Only verify server after updating version, otherwise it is done twice
-if [[ $(kvget isUpdated) == "true" || $(kvget noUpdate == "true") ]]; then
+if [[ $(kvget_system isUpdated) == "true" || $(kvget_system noUpdate == "true") ]]; then
 	verify_server
 fi
+
+setupEditor
 

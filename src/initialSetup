@@ -36,8 +36,9 @@ installZenity()
 	fi
 }
 
-ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion
 
-kvset $initialSetupComplete "true"
+ln -s $adbCompanionDir/adbcompanion $binDirectory/adbcompanion 2>/dev/null
+
+kvset_system $initialSetupComplete "true"
 
 mkdir -p /scratch/logs/

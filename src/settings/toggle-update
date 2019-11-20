@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+adbServices="$adbCompanionDir/services/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash 
+
+if [[ $(kvget_system noUpdate) == "true"  ]]; then
+	update=$(zenity --list --text "Would you like to turn updates on or off?" --radiolist --column "Pick" --column "Toggle" FALSE On TRUE Off 2>/dev/null);
+else
+	update=$(zenity --list --text "Would you like to turn updates on or off?" --radiolist --column "Pick" --column "Toggle" TRUE On FALSE Off 2>/dev/null);
+fi
+
+if [[ $update == "On" ]]; then
+	kvset_system noUpdate "false"
+	echo "Updates Turned On"
+elif [[ $update == "Off" ]]; then
+	kvset_system noUpdate "true"
+	echo "Updates Turned Off"
+fi
+	

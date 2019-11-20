@@ -23,17 +23,15 @@ source $adbCompanionSrc/kv-bash/./kv-bash
 
 finish()
 {
-	if [[ $(kvget isUpdated) == "true" ]]; then
+	if [[ $(kvget_system isUpdated) == "true" ]]; then
 		$adbCompanionSrc/restoreStash
-		kvdel isUpdated
+		kvdel_system isUpdated
 	fi
-	
-	kvdel noUpdate
 }
 
 trap finish EXIT
 
-if [[ $(kvget $initialSetupComplete) != "true" ]]; then
+if [[ $(kvget_system $initialSetupComplete) != "true" ]]; then
 	$initialSetup
 fi
 
@@ -45,7 +43,7 @@ setup()
 		exit
 	fi
 	
-	if [[ $(kvget isUpdated) != "true" && $(kvget noUpdate) != "true" ]]; then
+	if [[ $(kvget_system isUpdated) != "true" && $(kvget_system noUpdate) != "true" ]]; then
 		$update
 		exit
 	fi
@@ -53,7 +51,9 @@ setup()
 
 chooseService()
 {	
-	for i in $adbServices/*' '*; do mv "$i" `echo $i | sed -e 's/ /_/g'`; done
+	for i in $adbServices/*' '*; do 
+		mv "$i" `echo $i | sed -e 's/ /_/g'` 2>/dev/null
+	done
 	
 	for script in $adbServices/*; do
 		services+=($(basename $script))
@@ -100,6 +100,7 @@ if [[ $ans != "" ]]; then
 		deviceName=$ans
 	fi
 else
+	echo "No Device Chosen"
 	exit
 fi
 

@@ -8,28 +8,16 @@ adbCompanionSrc="$adbCompanionDir/src/"
 
 source $adbCompanionSrc/kv-bash/./kv-bash
 
-systemVariables+=("initialSetupComplete")
-systemVariables+=("isUpdated")
-systemVariables+=("mostRecentBranch")
-systemVariables+=("isStashPopped")
-
 labelNewDevices()
 {
 	for line in $@; do
 		if [[ $(kvget $line) == "" ]]; then
-			input=$(zenity --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" 2>/dev/null)
+			input=$(zenity --width=300 --title "Register New Device" --entry --text "Enter the name of device with following ID - $line" 2>/dev/null)
 			
 			if [[ $input == "" ]]; then
 				continue
 			fi
 			
-			for systemVariable in ${systemVariables[@]}; do
-				if [[ $input == $systemVariable ]]; then
-					zenity --error --text "System Variable: Please Choose Another Name" 2>/dev/null
-					labelNewDevices $@
-					return
-				fi
-			done
 			
 			if [[ $(kvget $input) != "" ]]; then
 				zenity --error --text "That Name Already Exists" 2>/dev/null

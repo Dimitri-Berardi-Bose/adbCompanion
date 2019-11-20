@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+adbServices="$adbCompanionDir/services/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash 
+
+case $(kvget_system preferredEditor) in
+	"gedit")
+		textEditor=$(zenity --list --text "Please Choose Your Preferred Text Editor" --radiolist --column "Pick" --column "Editors" FALSE vim TRUE gedit 2>/dev/null);
+		;;
+	"vim")
+		textEditor=$(zenity --list --text "Please Choose Your Preferred Text Editor" --radiolist --column "Pick" --column "Editors" TRUE vim FALSE gedit 2>/dev/null);
+		;;
+	*)
+		textEditor=$(zenity --list --text "Please Choose Your Preferred Text Editor" --radiolist --column "Pick" --column "Editors" FALSE vim FALSE gedit 2>/dev/null);
+		;;
+esac
+
+kvset_system preferredEditor $textEditor
+echo "You're preferred text editor is set to $textEditor"
