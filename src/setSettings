@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+adbCompanionSettings="$adbCompanionSrc/settings"
+
+for setting in $adbCompanionSettings/*; do
+	settings+=($(basename $setting))
+done
+
+IFS=$'\n' GLOBIGNORE='*' sortedSettings=($(printf '%s\n' ${settings[@]} | awk '{ print length($0) " " $0; }' | sort -n | cut -d ' ' -f 2-))
+
+declare -i height=$(( 120+20*(${#settings[@]} + 1) ))
+
+setting=$(zenity --height=$height --width=300 --title "Settings" --list --text "Choose a Setting" --column "Options" "${sortedSettings[@]}" 2>/dev/null);
+	
+if [[ $setting != "" ]]; then
+	$adbCompanionSettings/$setting
+fi

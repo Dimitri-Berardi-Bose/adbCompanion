@@ -1,0 +1,12 @@
+#!/bin/bash
+# Defining Directories 
+
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+source $adbCompanionSrc/kv-bash/./kv-bash
+
+kvclear
+echo "Device Names Cleared Successfully"

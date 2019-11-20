@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Defining Directories 
+homeDirectory="$HOME"
+binDirectory="$homeDirectory/bin/"
+adbCompanionDir="$binDirectory/adbCompanion/"
+adbCompanionSrc="$adbCompanionDir/src/"
+
+cd $homeDirectory
+sudo rm -rf .kvbash
+sudo rm -rf .kvbash_system
+
+cd $binDirectory
+unlink adbCompanion
+sudo rm -rf adbCompanion

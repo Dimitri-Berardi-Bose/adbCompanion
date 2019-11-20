@@ -22,8 +22,21 @@ finish() {
 	esac
 }
 
+getLogs() {
+	grepBool=$(zenity --question --ellipsize --text "\nWould you like to \ngrep this log?" 2>/dev/null);
+
+	case $? in
+		"0")
+			input=$(zenity --title "adb_log" --entry --text "Enter the parameters, which will be implemented as:  'adblog | grep <input>'" 2>/dev/null)
+			echo "$input"
+			adblog -s $deviceID -l | grep "$input"
+			;;
+		"1")
+			adblog -s $deviceID -l
+			;;
+	esac
+}
+
 trap finish EXIT
 
-adblog -s $deviceID -l
-
-
+getLogs

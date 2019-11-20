@@ -15,10 +15,10 @@ cd $adbCompanionDir
 eatOutput=$(git stash)
 
 if [[ $(git branch | grep \* | cut -d ' ' -f2) != "master" ]]; then
-	kvset mostRecentBranch $(git branch | grep \* | cut -d ' ' -f2)
+	kvset_system mostRecentBranch $(git branch | grep \* | cut -d ' ' -f2)
 	eatOutput=$(git checkout master)
 else
-	kvset mostRecentBranch master
+	kvset_system mostRecentBranch master
 fi
 
 eatOutput=$(git pull)

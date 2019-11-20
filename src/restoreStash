@@ -14,7 +14,7 @@ cd $adbCompanionDir
 
 restoreBranch()
 {
-	case $(kvget mostRecentBranch) in
+	case $(kvget_system mostRecentBranch) in
 		$(git branch | grep \* | cut -d ' ' -f2))
 			return
 			;;
@@ -22,7 +22,7 @@ restoreBranch()
 			return
 			;;
 		*)
-			git checkout $(kvget mostRecentBranch)
+			git checkout $(kvget_system mostRecentBranch)
 			;;
 	esac	
 }
