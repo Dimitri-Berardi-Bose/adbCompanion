@@ -76,8 +76,7 @@ versioning() {
 		"")
 			kvclear
 			kvset_system version $(cat $adbCompanionSrc/version)
-			echo "Due to upgrades in the system, you will need to name your devices again"
-			echo 
+			echo "Due to upgrades in the system, previous users will need to name their devices again"
 			;;
 	esac
 }
