@@ -1,6 +1,7 @@
 # adbCompanion
 <br><br>
 
+
 ## Requirements
 	1. ~/bin/ directory must exist
 	2. To run from anywhere, users ~/bin/ directory must be in users PATH
